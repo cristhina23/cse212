@@ -44,8 +44,8 @@ public class PriorityQueueTests
     // Scenario: Verify that when multiple items have the same highest priority,
     // the one closest to the front of the queue is removed first (FIFO behavior).
     // Expected Result: If A and B both have priority 2, A (first inserted) is removed before B.
-    // Defect(s) Found: The code uses `>=` in comparison, so it removes the *last* matching item
-    // instead of the *first*, breaking FIFO behavior.
+    // Defect(s) Found: The code uses `>=` in comparison, so it removes the last matching item
+    // instead of the first, breaking FIFO behavior.
     public void TestPriorityQueue_SamePriorityFIFO()
     {
         var pq = new PriorityQueue();
