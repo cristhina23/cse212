@@ -15,7 +15,11 @@ public static class Recursion
     public static int SumSquaresRecursive(int n)
     {
         // TODO Start Problem 1
-        return 0;
+        if (n <= 0)
+        {
+            return 0; // this is the base case
+        }
+        return n * n + SumSquaresRecursive(n - 1); // here i'm applying the recursive call
     }
 
     /// <summary>
@@ -40,6 +44,21 @@ public static class Recursion
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
         // TODO Start Problem 2
+       
+        if (size == 0)
+        {
+            results.Add(word); //this is my base case
+            return;
+        }
+
+        for (int i = 0; i < letters.Length; i++)
+        {
+           char current = letters[i];
+           string remainingLetters = letters.Substring(0, i) + letters.Substring(i + 1);
+           PermutationsChoose(results, remainingLetters, size - 1, word + current);
+        }
+
+
     }
 
     /// <summary>
@@ -86,9 +105,15 @@ public static class Recursion
     /// </summary>
     public static decimal CountWaysToClimb(int s, Dictionary<int, decimal>? remember = null)
     {
+        // if remember is null, initialize it
+        if (remember == null)
+        {
+            remember = new Dictionary<int, decimal>();
+        }
+
         // Base Cases
         if (s == 0)
-            return 0;
+            return 1;
         if (s == 1)
             return 1;
         if (s == 2)
@@ -97,9 +122,17 @@ public static class Recursion
             return 4;
 
         // TODO Start Problem 3
+    /// Check if the result is already cached
+        if (remember.ContainsKey(s))
+    {
+        return remember[s];
+    }
 
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways = CountWaysToClimb(s - 1, remember) + CountWaysToClimb(s - 2, remember) + CountWaysToClimb(s - 3, remember);
+
+        // Cache the result
+        remember[s] = ways;
         return ways;
     }
 
@@ -119,7 +152,21 @@ public static class Recursion
     public static void WildcardBinary(string pattern, List<string> results)
     {
         // TODO Start Problem 4
-    }
+        int index = pattern.IndexOf('*');
+
+            if (index == -1)
+            {
+                // Base case: no wildcard left, add to results
+                results.Add(pattern);
+                return;
+            }
+
+            // Replace '*' with '0' and apply recursion
+            WildcardBinary(pattern.Substring(0, index) + "0" + pattern.Substring(index + 1), results);
+
+            // Replace '*' with '1' and recurse
+            WildcardBinary(pattern.Substring(0, index) + "1" + pattern.Substring(index + 1), results);
+            }
 
     /// <summary>
     /// Use recursion to insert all paths that start at (0,0) and end at the
@@ -139,5 +186,30 @@ public static class Recursion
         // ADD CODE HERE
 
         // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+
+        // Check if move is valid
+        if (!maze.IsValidMove(currPath, x, y))
+        return;
+
+
+        // Add current position to path
+        currPath.Add((x, y));
+
+        // Check if we've reached the end
+        if (maze.IsEnd(x, y))
+        {
+            results.Add(currPath.AsString());
+            currPath.RemoveAt(currPath.Count - 1); // backtrack
+            return;
+        }
+
+        // Explore all 4 directions
+        SolveMaze(results, maze, x + 1, y, currPath); // down
+        SolveMaze(results, maze, x - 1, y, currPath); // up
+        SolveMaze(results, maze, x, y + 1, currPath); // right
+        SolveMaze(results, maze, x, y - 1, currPath); // left
+
+        // Backtrack: remove current position before returning
+        currPath.RemoveAt(currPath.Count - 1);
     }
 }
