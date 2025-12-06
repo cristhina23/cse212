@@ -61,5 +61,5 @@ public class Node
 
         // Height is 1 (this node) plus the larger subtree height
         return 1 + Math.Max(leftHeight, rightHeight);
-    }
+        
 }
